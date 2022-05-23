@@ -1,0 +1,2 @@
+rootProject.name = "scli-renew"
+
