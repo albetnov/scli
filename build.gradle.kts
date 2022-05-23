@@ -2,11 +2,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.6.20"
-    application
+    id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 group = "com.scli"
-version = "1.0-dev"
+version = "1.1-dev"
 
 repositories {
     mavenCentral()

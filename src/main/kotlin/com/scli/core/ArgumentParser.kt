@@ -10,26 +10,26 @@ class ArgumentParser(private val arguments: Array<String>) {
     )
     private val optionalArgs: MutableMap<String, String> = mutableMapOf()
     private var argExist: Int? = null
-    val VERSION: Double = 1.0
-    val APP_NAME: String = "MyApplication"
-    val AUTHOR: String = "John Doe"
+    var VERSION: Double = 1.0
+    var APP_NAME: String = "MyApplication"
+    var AUTHOR: String = "John Doe"
 
     init {
         val required = arguments.filterNot { it.startsWith("--") }
 
         var count = 0
         required.forEach {
+            if (count > 1) {
+                println("Error: More than one arguments founded.")
+                exitProcess(0)
+            }
+
             if (argsList.containsKey(it)) {
                 count++
             }
         }
 
-        if (count > 1) {
-            println("Error: More than one arguments founded.")
-            exitProcess(0)
-        }
-
-        if (access("version").get()) {
+        if (access("version").check()) {
             println("${APP_NAME}:${AUTHOR} Version $VERSION")
             exitProcess(0)
         }
@@ -56,7 +56,7 @@ class ArgumentParser(private val arguments: Array<String>) {
         return this
     }
 
-    fun get(takeValue: Boolean): String? {
+    fun get(takeValue: Boolean, default: () -> String?): String? {
         if (takeValue && argExist != null) {
             val value: String? = arguments.getOrNull(argExist!! + 1)
             argExist = null
@@ -64,10 +64,10 @@ class ArgumentParser(private val arguments: Array<String>) {
                 return value
             }
         }
-        return null
+        return default()
     }
 
-    fun get(): Boolean {
+    fun check(): Boolean {
         if (argExist != null) {
             argExist = null
             return true
@@ -76,7 +76,7 @@ class ArgumentParser(private val arguments: Array<String>) {
     }
 
     fun markAsFinal() {
-        if (access("help").get()) {
+        if (access("help").check()) {
             println("-----$APP_NAME Required Parameters-----")
             argsList.forEach {
                 println(":: ${it.key}")
@@ -90,4 +90,6 @@ class ArgumentParser(private val arguments: Array<String>) {
             exitProcess(0)
         }
     }
+
+    fun isNothing(): Boolean = arguments.isEmpty()
 }

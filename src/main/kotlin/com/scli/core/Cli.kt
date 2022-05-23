@@ -9,7 +9,13 @@ object Cli {
         return Confirmation(message)
     }
 
-    fun quiz(vararg questions: String): Quiz {
-        return Quiz(*questions)
+    fun quiz(question: String, vararg options: String): Quiz {
+        return Quiz(question, *options)
+    }
+    fun <T> validateIsInt(value: T): Boolean {
+        if (value is Int && value != 0) {
+            return true
+        }
+        return false
     }
 }

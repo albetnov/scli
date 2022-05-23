@@ -1,15 +1,16 @@
 package com.scli.core
 
+import com.scli.core.Cli.validateIsInt
 import kotlin.reflect.KProperty
 
-class Quiz(vararg questions: String) {
-    private val questionsList = questions
+class Quiz(val question: String, vararg options: String) {
+    private val optionsList = options
     operator fun getValue(thisRef: Any, property: KProperty<*>): String {
-        println("Question List")
+        println(optionsList[0])
         do {
             var i = 1
-            for (question in questionsList) {
-                println("[$i]: $question")
+            for (option in optionsList) {
+                println("[$i]: $option")
                 i++
             }
 
@@ -18,19 +19,12 @@ class Quiz(vararg questions: String) {
 
             if (!validateIsInt(answers)) {
                 println("Answer must be numbers of quiz!")
-            } else if (questionsList.getOrNull(answers!! - 1) != null) {
-                return questionsList[answers - 1]
+            } else if (optionsList.getOrNull(answers!! - 1) != null) {
+                return optionsList[answers - 1]
             }
 
         } while (true)
 
 
-    }
-
-    private fun <T> validateIsInt(value: T): Boolean {
-        if (value is Int && value != 0) {
-                return true
-        }
-        return false
     }
 }
