@@ -1,3 +1,4 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -18,6 +19,21 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks {
+    named<ShadowJar>("shadowJar") {
+        archiveBaseName.set("shadow")
+        mergeServiceFiles()
+        manifest {
+            attributes(mapOf("Main-Class" to "com.example.MainKt"))
+        }
+        // @see https://youtrack.jetbrains.com/issue/KT-25709
+        exclude("**/*.kotlin_metadata")
+        exclude("**/*.kotlin_builtins")
+
+        archiveClassifier.set("") // remove suffix `-all` as intellij can't find the library otherwise
+    }
 }
 
 tasks.withType<KotlinCompile> {

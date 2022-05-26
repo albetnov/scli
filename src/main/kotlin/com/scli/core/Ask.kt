@@ -1,6 +1,7 @@
 package com.scli.core
 
 import com.scli.core.Cli.validateIsInt
+import java.awt.SystemColor
 import java.awt.SystemColor.info
 import kotlin.reflect.KProperty
 
@@ -11,20 +12,26 @@ class Ask(private val info: String) {
     }
 
     operator fun getValue(thisRef: Any, property: KProperty<*>): String {
-        println("[Q]: $info")
+        return ask()
+    }
+
+    fun ask(): String {
+        println("[Q]: ${SystemColor.info}")
         print("-> ")
 
-        do {
-            val userInput = readln()
+        val userInput = readln()
 
-            if (isNumber) {
+        if(isNumber) {
+            do {
                 val converted = userInput.toIntOrNull()
                 if (!validateIsInt(converted)) {
                     println("Error: Answer must be numbers!")
                 } else {
-                    return userInput
+                    break
                 }
-            }
-        } while (true)
+            } while (true)
+        }
+
+        return userInput
     }
 }

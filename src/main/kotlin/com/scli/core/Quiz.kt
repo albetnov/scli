@@ -5,7 +5,11 @@ import kotlin.reflect.KProperty
 
 class Quiz(val question: String, vararg options: String) {
     private val optionsList = options
-    operator fun getValue(thisRef: Any, property: KProperty<*>): String {
+    operator fun getValue(thisRef: Any, property: KProperty<*>): Answer {
+        return quiz()
+    }
+
+    fun quiz(): Answer {
         println(optionsList[0])
         do {
             var i = 1
@@ -20,11 +24,9 @@ class Quiz(val question: String, vararg options: String) {
             if (!validateIsInt(answers)) {
                 println("Answer must be numbers of quiz!")
             } else if (optionsList.getOrNull(answers!! - 1) != null) {
-                return optionsList[answers - 1]
+                return Answer(answers - 1, optionsList[answers - 1])
             }
 
         } while (true)
-
-
     }
 }

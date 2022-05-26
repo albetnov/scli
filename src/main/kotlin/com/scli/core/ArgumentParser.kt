@@ -29,8 +29,8 @@ class ArgumentParser(private val arguments: Array<String>) {
             }
         }
 
-        if (access("version").check()) {
-            println("${APP_NAME}:${AUTHOR} Version $VERSION")
+        if (count == 0) {
+            println("Error: Arguments not found! see 'help' for details.")
             exitProcess(0)
         }
     }
@@ -56,8 +56,8 @@ class ArgumentParser(private val arguments: Array<String>) {
         return this
     }
 
-    fun get(takeValue: Boolean, default: () -> String?): String? {
-        if (takeValue && argExist != null) {
+    fun get(default: () -> String? = { null }): String? {
+        if (argExist != null) {
             val value: String? = arguments.getOrNull(argExist!! + 1)
             argExist = null
             if (value != null) {
@@ -75,7 +75,7 @@ class ArgumentParser(private val arguments: Array<String>) {
         return false
     }
 
-    fun markAsFinal() {
+    fun markAsFinal(): ArgumentParser {
         if (access("help").check()) {
             println("-----$APP_NAME Required Parameters-----")
             argsList.forEach {
@@ -89,7 +89,31 @@ class ArgumentParser(private val arguments: Array<String>) {
             }
             exitProcess(0)
         }
+
+        if (access("version").check()) {
+            println("${APP_NAME}:${AUTHOR} Version $VERSION")
+            exitProcess(0)
+        }
+
+        return this
     }
 
     fun isNothing(): Boolean = arguments.isEmpty()
+
+    fun mustRunWithArgument(throwErr: Boolean = true) {
+        if (isNothing()) {
+            if(throwErr) {
+                throw Throwable("Error: Arguments Required!")
+            }
+            println("Error: Arguments Required!")
+            exitProcess(0)
+        }
+    }
+
+    fun logic(argument: String, logic: (ArgumentParser) -> Unit) {
+        val argValue = access(argument)
+        if(argValue.check()) {
+            logic(argValue)
+        }
+    }
 }
