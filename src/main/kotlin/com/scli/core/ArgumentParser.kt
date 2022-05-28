@@ -76,8 +76,9 @@ class ArgumentParser() {
     fun logic(argument: String, logic: (ArgumentParser) -> Unit) {
         val argValue = access(argument)
         if (argValue.check()) {
-            logic(argValue)
+            return logic(argValue)
         }
+        throw IllegalArgumentException("Error: Argument not found.")
     }
 
     fun fill(argument: Array<String>) {

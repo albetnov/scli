@@ -13,7 +13,7 @@ object Cli {
         return Wrapper(Quiz(question, *options).quiz())
     }
 
-    fun <T> validateIsInt(value: T): Boolean {
+    fun <T> validateIsInt(value: T?): Boolean {
         if (value is Int && value != 0) {
             return true
         }
