@@ -20,9 +20,3 @@ object Cli {
         return false
     }
 }
-
-fun main() {
-    val hello = Cli.ask("Contoh").repeatUntil {
-        it == "oke"
-    }.fetch()
-}

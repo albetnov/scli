@@ -1,16 +1,22 @@
 package com.scli.core
 
 import com.scli.core.Cli.validateIsInt
+import kotlin.reflect.KFunction0
 import kotlin.reflect.KProperty
 
 class Quiz(val question: String, vararg options: String) {
     private val optionsList = options
+    private var read = ::readln
+    fun setReadline(readline: KFunction0<String> = ::readln): Quiz {
+        read = readline
+        return this
+    }
     operator fun getValue(thisRef: Any, property: KProperty<*>): Answer {
         return quiz()
     }
 
     fun quiz(): Answer {
-        println(optionsList[0])
+        println(question)
         do {
             var i = 1
             for (option in optionsList) {
@@ -19,12 +25,12 @@ class Quiz(val question: String, vararg options: String) {
             }
 
             print("-> ")
-            val answers = readln().toIntOrNull()
+            val answers = read().toIntOrNull()
 
             if (!validateIsInt(answers)) {
                 println("Answer must be numbers of quiz!")
             } else if (optionsList.getOrNull(answers!! - 1) != null) {
-                return Answer(answers - 1, optionsList[answers - 1])
+                return Answer(answers, optionsList[answers - 1])
             }
 
         } while (true)
