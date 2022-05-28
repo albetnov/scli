@@ -1,8 +1,10 @@
 package com.scli.core
 
+import com.scli.tester.stdOut
+import kotlin.reflect.KFunction1
 import kotlin.system.exitProcess
 
-class ArgumentParser() {
+class ArgumentParser {
 
     private val argsList: MutableMap<String, String> = mutableMapOf(
         "version" to "Show app version",
@@ -15,6 +17,12 @@ class ArgumentParser() {
     var APP_NAME: String = "MyApplication"
     var AUTHOR: String = "John Doe"
     private var finalized = false
+    private var stdOut: KFunction1<String, Unit> = ::println
+
+    fun debug(stdOut: KFunction1<String, Unit> = ::stdOut): ArgumentParser {
+        this.stdOut = stdOut
+        return this
+    }
 
     fun addArgs(args: Map<String, String>): ArgumentParser {
         args.forEach { t, u ->
@@ -68,7 +76,7 @@ class ArgumentParser() {
             if (throwErr) {
                 throw Throwable("Error: Arguments Required!")
             }
-            println("Error: Arguments Required!")
+            stdOut("Error: Arguments Required!")
             exitProcess(0)
         }
     }
@@ -92,7 +100,7 @@ class ArgumentParser() {
         var count = 0
         required.forEach {
             if (count > 1) {
-                println("Error: More than one arguments founded.")
+                stdOut("Error: More than one arguments founded.")
                 exitProcess(0)
             }
             if (argsList.containsKey(it)) {
@@ -109,26 +117,26 @@ class ArgumentParser() {
         }
 
         if (!isNothing() && count == 0 && !commandFound) {
-            println("Error: Arguments not found! see 'help' for details.")
+            stdOut("Error: Arguments not found! see 'help' for details.")
             exitProcess(0)
         }
 
         if (access("help").check()) {
-            println("-----$APP_NAME Required Parameters-----")
+            stdOut("-----$APP_NAME Required Parameters-----")
             argsList.forEach {
-                println(":: ${it.key}")
-                println(" -> ${it.value}")
+                stdOut(":: ${it.key}")
+                stdOut(" -> ${it.value}")
             }
-            println("-----$APP_NAME Optional Parameters-----")
+            stdOut("-----$APP_NAME Optional Parameters-----")
             optionalArgs.forEach {
-                println(">> ${it.key}")
-                println(" -> ${it.value}")
+                stdOut(">> ${it.key}")
+                stdOut(" -> ${it.value}")
             }
             exitProcess(0)
         }
 
         if (access("version").check()) {
-            println("${APP_NAME}:${AUTHOR} Version $VERSION")
+            stdOut("${APP_NAME}:${AUTHOR} Version $VERSION")
             exitProcess(0)
         }
     }
